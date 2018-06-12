@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ServiceManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="Actor1Pkg" Version="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+  <ServiceTypes>
+    <StatefulServiceType ServiceTypeName="Actor1ActorServiceType" HasPersistedState="true">
+      <Extensions>
+        <Extension Name="__GeneratedServiceType__" GeneratedId="11090b90-f408-416e-963f-00787ba930df|Persisted">
+          <GeneratedNames xmlns="http://schemas.microsoft.com/2015/03/fabact-no-schema">
+            <DefaultService Name="Actor1ActorService" />
+            <ReplicatorEndpoint Name="Actor1ActorServiceReplicatorEndpoint" />
+            <ReplicatorConfigSection Name="Actor1ActorServiceReplicatorConfig" />
+            <ReplicatorSecurityConfigSection Name="Actor1ActorServiceReplicatorSecurityConfig" />
+            <StoreConfigSection Name="Actor1ActorServiceLocalStoreConfig" />
+            <ServiceEndpointV2 Name="Actor1ActorServiceEndpointV2" />
+          </GeneratedNames>
+        </Extension>
+      </Extensions>
+    </StatefulServiceType>
+    <StatefulServiceType ServiceTypeName="MetActorServiceType">
+      <Extensions>
+        <Extension Name="__GeneratedServiceType__" GeneratedId="c67c138a-f8e1-4c9b-a519-2d34ca5359d8|None">
+          <GeneratedNames xmlns="http://schemas.microsoft.com/2015/03/fabact-no-schema">
+            <DefaultService Name="MetActorService" />
+            <ReplicatorEndpoint Name="MetActorServiceReplicatorEndpoint" />
+            <ReplicatorConfigSection Name="MetActorServiceReplicatorConfig" />
+            <ReplicatorSecurityConfigSection Name="MetActorServiceReplicatorSecurityConfig" />
+            <StoreConfigSection Name="MetActorServiceLocalStoreConfig" />
+            <ServiceEndpointV2 Name="MetActorServiceEndpointV2" />
+          </GeneratedNames>
+        </Extension>
+      </Extensions>
+    </StatefulServiceType>
+  </ServiceTypes>
+  <CodePackage Name="Code" Version="1.0.0">
+    <EntryPoint>
+      <ExeHost>
+        <Program>Actor1.exe</Program>
+      </ExeHost>
+    </EntryPoint>
+  </CodePackage>
+  <ConfigPackage Name="Config" Version="1.0.0" />
+  <Resources>
+    <Endpoints>
+      <Endpoint Name="Actor1ActorServiceEndpointV2" />
+      <Endpoint Name="Actor1ActorServiceReplicatorEndpoint" />
+      <Endpoint Name="MetActorServiceEndpointV2" />
+      <Endpoint Name="MetActorServiceReplicatorEndpoint" />
+    </Endpoints>
+  </Resources>
+  <!-- O conteúdo será gerado durante a build -->
+</ServiceManifest>

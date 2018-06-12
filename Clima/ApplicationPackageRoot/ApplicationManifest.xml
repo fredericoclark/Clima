@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="ClimaType" ApplicationTypeVersion="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+  <Parameters>
+    <Parameter Name="Actor1ActorService_PartitionCount" DefaultValue="10" />
+    <Parameter Name="Actor1ActorService_MinReplicaSetSize" DefaultValue="3" />
+    <Parameter Name="Actor1ActorService_TargetReplicaSetSize" DefaultValue="3" />
+    <Parameter Name="MetActorService_PartitionCount" DefaultValue="10" />
+    <Parameter Name="MetActorService_MinReplicaSetSize" DefaultValue="1" />
+    <Parameter Name="MetActorService_TargetReplicaSetSize" DefaultValue="1" />
+  </Parameters>
+  <!-- Importe o ServiceManifest do ServicePackage. O ServiceManifestName e a ServiceManifestVersion 
+       devem corresponder aos atributos Name e Version do elemento ServiceManifest definido no arquivo 
+       ServiceManifest.xml. -->
+  <ServiceManifestImport>
+    <ServiceManifestRef ServiceManifestName="Actor1Pkg" ServiceManifestVersion="1.0.0" />
+  </ServiceManifestImport>
+  <DefaultServices>
+    <Service Name="Actor1ActorService" GeneratedIdRef="11090b90-f408-416e-963f-00787ba930df|Persisted">
+      <StatefulService ServiceTypeName="Actor1ActorServiceType" TargetReplicaSetSize="[Actor1ActorService_TargetReplicaSetSize]" MinReplicaSetSize="[Actor1ActorService_MinReplicaSetSize]">
+        <UniformInt64Partition PartitionCount="[Actor1ActorService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
+      </StatefulService>
+    </Service>
+    <Service Name="MetActorService" GeneratedIdRef="c67c138a-f8e1-4c9b-a519-2d34ca5359d8|None">
+      <StatefulService ServiceTypeName="MetActorServiceType" TargetReplicaSetSize="[MetActorService_TargetReplicaSetSize]" MinReplicaSetSize="[MetActorService_MinReplicaSetSize]">
+        <UniformInt64Partition PartitionCount="[MetActorService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
+      </StatefulService>
+    </Service>
+    <!-- A seção abaixo cria instâncias dos tipos de serviço quando uma instância deste 
+         tipo de aplicativo é criada. Também é possível criar uma ou mais instâncias do tipo de serviço usando o módulo 
+         ServiceFabric do PowerShell.
+         
+         O atributo ServiceTypeName abaixo deve corresponder ao nome definido no arquivo ServiceManifest.xml importado. -->
+  </DefaultServices>
+</ApplicationManifest>
