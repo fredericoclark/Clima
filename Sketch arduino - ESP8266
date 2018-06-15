@@ -1,0 +1,156 @@
+#include <DHT.h>
+#include <ESP8266WiFi.h>
+#include <ESP8266WebServer.h>
+#include <ESP8266HTTPClient.h>
+
+
+#define DHTPIN 13
+#define CHUVA_A A0
+#define CHUVA_D 5
+
+DHT dht(DHTPIN,DHT11);
+
+String host = "192.168.43.243";
+const char* ssid = "network SSID"; //nome da rede
+const char* pass = "network Password"; //senha
+int state = 0;
+double tempo = 0;
+String mac;
+String ip;
+String message;
+String regiao = "Sudeste";
+String status_chuva;
+String status_chuva2;
+String intensidade_chuva;
+String intensidade_chuva2;
+
+WiFiClient client;
+HTTPClient http;
+ESP8266WebServer server(8080);
+
+void setup() {
+  // put your setup code here, to run once:
+  Serial.begin(9600);
+  dht.begin();
+
+  WiFi.begin(ssid, pass);
+  Serial.print("Conectando ao WiFi");
+  while (WiFi.status() != WL_CONNECTED)
+  {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.print("\r\n");
+  Serial.println("Conectado!");
+  Serial.print("\r\n");
+  mac = WiFi.macAddress();
+  ip = WiFi.localIP().toString();
+  pinMode(CHUVA_D,INPUT);
+  delay(5000); 
+  server.on("/status", handleStatus);
+  server.begin();
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  server.handleClient();
+
+  if (tempo == 0 || millis() - tempo > 300000){
+    
+    float h = dht.readHumidity();
+    float t = dht.readTemperature();
+    int c = digitalRead(CHUVA_D);
+    int i = analogRead(CHUVA_A);
+
+    if (isnan(h) || isnan(t)) {
+      return;
+    }
+
+    if (c){
+        status_chuva = "Nao";
+    }
+      else{
+        status_chuva = "Sim";  
+      }
+      
+    if (i >900 && i <1023)
+  {
+  intensidade_chuva = "-";
+  }
+  else if (i >600 && i <900)
+  {
+    intensidade_chuva = "Fraca";
+  }
+  else if (i >400 && i <600)
+  {
+    intensidade_chuva = "Moderada";
+  }
+  else if (i <400)
+  {
+    intensidade_chuva = "Forte";
+  }
+
+    message = "/api/values/" + mac + "/" + regiao + "/" + t + "/" + h + "/" + status_chuva + "/" + intensidade_chuva  + "/" + ip;
+     
+    http.begin(host, 8247, message);
+    http.GET();
+    String payload = http.getString();
+          Serial.println(payload);
+    http.end();
+    
+
+    Serial.print(message);
+    Serial.print("\r\n"); 
+    Serial.print(ip);
+    Serial.print("\r\n");
+    Serial.print("OK");
+    Serial.print("\r\n");
+    
+    tempo = millis();
+  }   
+}
+
+void handleStatus() { //Handler for the status path
+
+    float h2 = dht.readHumidity();
+    float t2 = dht.readTemperature();
+    int c2 = digitalRead(CHUVA_D);
+    int i2 = analogRead(CHUVA_A);
+
+    if (isnan(h2) || isnan(t2)) {
+      return;
+    }
+
+    if (c2){
+        status_chuva2 = "Nao";
+    }
+      else{
+        status_chuva2 = "Sim";  
+      }
+      
+    if (i2 >900 && i2 <1023)
+    {
+    intensidade_chuva2 = "-";
+    }
+    else if (i2 >600 && i2 <900)
+    {
+      intensidade_chuva2 = "Fraca";
+    }
+    else if (i2 >400 && i2 <600)
+    {
+      intensidade_chuva2 = "Moderada";
+    }
+    else if (i2 <400)
+    {
+      intensidade_chuva2 = "Forte";
+    }
+ 
+      String message2  = "Temperatura: " + String(t2) + "\n";
+             message2 += "Umidade: " + String(h2) + "\n";
+             message2 += "Chuva: " + status_chuva2 + "\n";
+             message2 += "Intensidade da Chuva: " + intensidade_chuva2 + "\n";
+ 
+      server.send(200, "text/plain", message2);
+      Serial.println(message);
+}
+
